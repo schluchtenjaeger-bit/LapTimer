@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏁 RC Lap Timer Live</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            font-size: calc(12px + 0.5vw);
+            background-color: #fff;
+            color: #000;
+        }
+        .table-responsive {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        .highlight {
+            background-color: #ffeeba;
+        }
+        .copyright {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            padding: 4px 8px;
+            font-size: 1.0rem;
+            color: #666;
+        }
+        .status-row span {
+            font-size: 1rem;
+        }
+        .btn-group-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid py-2">
+    <div class="text-center bg-primary text-white py-2 rounded">
+        <h1 class="h4">🏁 RC Lap Timer Live 🏁</h1>
+        <div>Streckenlänge: {{ rundenlaenge }} m | Letzte Aktualisierung: {{ letzte_aktualisierung }}</div>
+    </div>
+
+    <!-- Statuszeile -->
+    <div class="row px-3 mt-3 text-center status-row">
+        <div class="col-12 col-md">
+            <span class="fw-bold">📊 Gesamt-Runden:
+                <span class="text-primary">{{ anzahl_runden }}</span>
+            </span>
+        </div>
+        <div class="col-12 col-md">
+            <span class="fw-bold">
+                🔋 Akku:
+                <span style="color: {{ 'green' if battery_status == 'OK' else 'red' }};">
+                    {{ battery_status }}
+                </span>
+            </span>
+        </div>
+        <div class="col-12 col-md">
+            <span class="fw-bold">⏱ Durchschnitt:
+                <span class="geschwindigkeit">{{ gesamt_geschwindigkeit }} km/h</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="btn-group-flex my-3">
+        <a href="/?filter={{ 'off' if gefiltert else 'on' }}" class="btn btn-secondary">🔍 Filter {{ 'aus' if gefiltert else 'ein' }}</a>
+        <a href="/reset" class="btn btn-danger">🏁 Reset</a>
+        <a href="/sender" class="btn btn-warning">👥 Fahrer bearbeiten</a>
+        <a href="/fahrer" class="btn btn-info">📋 Fahrerwertung</a>
+        <a href="/download" class="btn btn-success">📥 CSV Export</a>
+        <button id="shutdown-btn" class="btn btn-dark" title="Herunterfahren">🛑</button>
+    </div>
+
+    <!-- Tabelle -->
+    <div class="table-responsive d-flex justify-content-center">
+        <table class="table table-striped table-sm align-middle text-center table-bordered bg-white text-dark" style="min-width: 600px;">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>⏰ Zeit</th>
+                    <th>🆔 Sender-ID</th>
+                    <th>👤 Fahrer</th>
+                    <th>⏱️ Rundenzeit</th>
+                    <th>🚀 km/h</th>
+                </tr>
+            </thead>
+<tbody>
+    {% for runde in rundendaten %}
+    <tr {% if loop.first %}class="highlight"{% endif %}>
+        <td>{{ loop.index }}</td>
+        <td>{{ runde.uhrzeit }}</td>
+        <td>{{ runde.sender_id }}</td>
+        <td>{{ runde.fahrername }}</td>
+        <td>
+            {% if runde.rundenzeit not in ["Erste Runde"] %}
+                {{ runde.rundenzeit }}
+            {% else %}
+                -
+            {% endif %}
+        </td>
+        <td class="geschwindigkeit">{{ runde.geschwindigkeit }}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+
+        </table>
+    </div>
+</div>
+
+<div class="copyright">&copy; {{ current_year }} Andreas Schulten</div>
+
+<script>
+    document.getElementById("shutdown-btn").addEventListener("click", function () {
+        if (confirm("Möchtest du den Raspberry Pi wirklich herunterfahren?")) {
+            fetch("/shutdown", { method: "POST" })
+                .then(response => response.json())
+                .then(data => alert(data.message || "Herunterfahren ausgeführt."))
+                .catch(error => alert("Fehler beim Herunterfahren."));
+        }
+    });
+</script>
+
+<!-- Auto-Reload-Skript -->
+<script>
+    setInterval(() => {
+        if (document.visibilityState === "visible") {
+            window.location.reload();
+        }
+    }, 2000);
+</script>
+</body>
+</html>

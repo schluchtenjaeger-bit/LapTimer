@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🚗 Fahrerverwaltung</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white d-flex justify-content-between">
+                <h3 class="mb-0">🚗 Fahrerverwaltung</h3>
+                <a href="/" class="btn btn-outline-light">🔙 Zurück</a>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Sender-ID</th>
+                                <th>Fahrername</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sid, name in sender_map.items() %}
+                            <tr>
+                                <td>{{ sid }}</td>
+                                <td>
+                                    <input type="text" name="{{ sid }}" class="form-control" value="{{ name }}">
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <button type="submit" class="btn btn-primary">💾 Speichern</button>
+                    <p class="mt-2 text-muted">🔄 Leeres Feld löscht den Fahrer aus der Liste.</p>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

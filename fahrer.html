@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>📋 Fahrerauswertung</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <style>
+        body {
+            font-size: 1rem;
+            text-align: center;
+        }
+        .table-sm td, .table-sm th {
+            font-size: 0.9rem;
+        }
+        .copyright {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            padding: 4px 8px;
+            font-size: 1.0rem;
+            color: #666;
+        }
+
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container mt-4">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white d-flex justify-content-between">
+                <h3 class="mb-0">📋 Fahrerauswertung</h3>
+                <a href="/" class="btn btn-outline-light">🔙 Zurück</a>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped table-sm">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Fahrer</th>
+                            <th>Gesamt-Runden</th>
+                            <th>Durchschnitt (km/h)</th>
+                            <th>Beste Rundenzeit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for eintrag in fahrer_stats %}
+                        <tr>
+                            <td>{{ eintrag.Fahrer }}</td>
+                            <td>{{ eintrag.Gesamt_Runden }}</td>
+                            <td>{{ '%.1f'|format(eintrag.Durchschnitt_kmh) }}</td>
+                            <td>{{ eintrag.Beste_Rundenzeit }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<div class="copyright">&copy; {{ current_year }} Andreas Schulten</div>
+
+</body>
+</html>
