@@ -20,13 +20,6 @@ Built to be simple, flexible, and easy to set up for hobby use.
 - Flask
 - pigpio library
 
-## Installation
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/your-username/your-repo.git
-   cd your-repo
-Install dependencies:
-
 bash
 Code kopieren
 sudo apt update
